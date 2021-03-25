@@ -170,6 +170,8 @@ def build_save_vocab(train_dataset, fields, opt):
 def main():
     opt = parse_args()
 
+    os.makedirs(os.path.dirname(opt.save_data), exist_ok=True)
+
     print("Extracting features...")
     src_nfeats = onmt.io.get_num_features(opt.data_type, opt.train_src, 'src')
     tgt_nfeats = onmt.io.get_num_features(opt.data_type, opt.train_tgt, 'tgt')

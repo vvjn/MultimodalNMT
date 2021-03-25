@@ -6,6 +6,7 @@ import argparse
 import math
 import codecs
 import torch
+from torch import cuda
 
 from itertools import count
 
@@ -55,9 +56,16 @@ def main():
     opts.model_opts(dummy_parser)
     dummy_opt = dummy_parser.parse_known_args([])[0]
 
-    opt.cuda = opt.gpu > -1
-    if opt.cuda:
-        torch.cuda.set_device(opt.gpu)
+    os.makedirs(os.path.dirname(opt.output), exist_ok=True)
+
+    device = torch.device("cpu")
+    # opt.cuda = opt.gpu > -1
+    opt.cuda = False
+    if opt.gpuid:
+        device = torch.device("cuda:{}".format(opt.gpuid[0]))
+        cuda.set_device(device)
+        opt.cuda = True
+        # torch.cuda.set_device(opt.gpu)
     
     # loading checkpoint just to find multimodal model type
     checkpoint = torch.load(opt.model,
@@ -66,7 +74,7 @@ def main():
     del checkpoint
 
     if opt.batch_size > 1:
-        print "Batch size > 1 not implemented! Falling back to batch_size = 1 ..."
+        print("Batch size > 1 not implemented! Falling back to batch_size = 1 ...")
         opt.batch_size = 1
 
     # load test image features
@@ -100,7 +108,7 @@ def main():
     # Sort batch by decreasing lengths of sentence required by pytorch.
     # sort=False means "Use dataset's sortkey instead of iterator's".
     data_iter = onmt.io.OrderedIterator(
-        dataset=data, device=opt.gpu,
+        dataset=data, device=device,
         batch_size=opt.batch_size, train=False, sort=False,
         sort_within_batch=True, shuffle=False)
 

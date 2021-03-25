@@ -1,9 +1,8 @@
 # Multi-modal Neural Machine Translation
+
 ## OpenNMT-py: Open-Source Neural Machine Translation
 
-[![Build Status](https://travis-ci.org/OpenNMT/OpenNMT-py.svg?branch=master)](https://travis-ci.org/OpenNMT/OpenNMT-py)
-
-This is the implementation of **four different multi-modal neural machine translation models** described in the research papers [(1)](http://aclweb.org/anthology/D17-1105) and [(2)](https://aclweb.org/anthology/P/P17/P17-1175.pdf).
+Originally from [here](https://github.com/vvjn/MultimodalNMT). This is the implementation of **four different multi-modal neural machine translation models** described in the research papers [(1)](http://aclweb.org/anthology/D17-1105) and [(2)](https://aclweb.org/anthology/P/P17/P17-1175.pdf).
 They are based on the [Pytorch](https://github.com/pytorch/pytorch) port of [OpenNMT](https://github.com/OpenNMT/OpenNMT), an open-source (MIT) neural machine translation system.
 
 
@@ -18,42 +17,13 @@ Table of Contents
  
 ## Requirements
 
-```
-torchtext>=0.2.1
-pytorch>=0.2
-```
+Tested on Python 3.6, CUDA 10.2.
 
-In case one of the two are missing or not up-to-date and assuming you installed pytorch using the conda package manager and torchtext using pip, you might want to run the following:
-
-```bash
-conda install -c soumith pytorch
-pip install torchtext --upgrade
+```
 pip install -r requirements.txt
-pip install pretrainedmodels
-conda update pytorch
 ```
 
 ## Features
-
-The following OpenNMT features are implemented:
-
-- [data preprocessing](http://opennmt.net/OpenNMT-py/options/preprocess.html)
-- [Inference (translation) with batching and beam search](http://opennmt.net/OpenNMT-py/options/translate.html)
-- [Multiple source and target RNN (lstm/gru) types and attention (dotprod/mlp) types](http://opennmt.net/OpenNMT-py/options/train.html#model-encoder-decoder)
-- [TensorBoard/Crayon logging](http://opennmt.net/OpenNMT-py/options/train.html#logging)
-- [Source word features](http://opennmt.net/OpenNMT-py/options/train.html#model-embeddings)
-- [Pretrained Embeddings](http://opennmt.net/OpenNMT-py/FAQ.html#how-do-i-use-pretrained-embeddings-e-g-glove)
-- [Copy and Coverage Attention](http://opennmt.net/OpenNMT-py/options/train.html#model-attention)
-- [Image-to-text processing](http://opennmt.net/OpenNMT-py/im2text.html)
-- [Speech-to-text processing](http://opennmt.net/OpenNMT-py/speech2text.html)
-
-Beta Features (committed):
-- multi-GPU
-- ["Attention is all you need"](http://opennmt.net/OpenNMT-py/FAQ.html#how-do-i-use-the-transformer-model)
-- Structured attention
-- [Conv2Conv convolution model]
-- SRU "RNNs faster than CNN" paper
-- Inference time loss functions.
 
 ## Multi-modal NMT Quickstart
 
@@ -82,7 +52,6 @@ In here, we assume you have downloaded the [Multi30k data set](http://www.statmt
 python preprocess.py -train_src /path/to/flickr30k/train.norm.tok.lc.bpe10000.en -train_tgt /path/to/flickr30k/train.norm.tok.lc.bpe10000.de -valid_src /path/to/flickr30k/val.norm.tok.lc.bpe10000.en -valid_tgt /path/to/flickr30k/val.norm.tok.lc.bpe10000.de -save_data data/m30k
 ```
 
-
 ### Step 2: Train the model
 
 To train a multi-modal NMT model, use the `train_mm.py` script. In addition to the parameters accepted by the standard `train.py` (that trains a text-only NMT model), this script expects the path to the training and validation image features, as well as the multi-modal model type (one of `imgd`, `imge`, `imgw`, or `src+img`).
@@ -106,7 +75,6 @@ As an example, if you wish to train a doubly-attentive NMT model (referred to as
 python train_mm.py -data data/m30k -save_model model_snapshots/NMT-src-img_ADAM -gpuid 0 -epochs 25 -batch_size 40 -path_to_train_img_feats /path/to/flickr30k/features/flickr30k_train_vgg19_bn_cnn_features.hdf5 -path_to_valid_img_feats /path/to/flickr30k/features/flickr30k_valid_vgg19_bn_cnn_features.hdf5 -optim adam -learning_rate 0.002 -use_nonlinear_projection --decoder_type doubly-attentive-rnn --multimodal_model_type src+img
 ```
 
-
 ### Step 3: Translate new sentences
 
 To translate a new test set, simply use `translate_mm.py` similarly as you would use the original `translate.py` script, with the addition of the path to the file containing the test image features. In the example below, we translate the Multi30k test set used in the 2016 run of the WMT Multi-modal MT Shared Task.
@@ -115,6 +83,10 @@ To translate a new test set, simply use `translate_mm.py` similarly as you would
 MODEL_SNAPSHOT=IMGD_ADAM_acc_60.79_ppl_8.38_e4.pt
 python translate_mm.py -src ~/exp/opennmt_imgd/data_multi30k/test2016.norm.tok.lc.bpe10000.en -model model_snapshots/${MODEL_SNAPSHOT} -path_to_test_img_feats ~/resources/multi30k/features/flickr30k_test_vgg19_bn_cnn_features.hdf5 -output model_snapshots/${MODEL_SNAPSHOT}.translations-test2016
 ```
+
+### Demo
+
+See the `demo.sh` file for an example.
 
 ## Citation
 

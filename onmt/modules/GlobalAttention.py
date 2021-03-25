@@ -77,7 +77,7 @@ class GlobalAttention(nn.Module):
         out_bias = self.attn_type == "mlp"
         self.linear_out = nn.Linear(dim*2, dim, bias=out_bias)
 
-        self.sm = nn.Softmax()
+        self.sm = nn.Softmax(dim=1)
         self.tanh = nn.Tanh()
 
         if coverage:
@@ -171,7 +171,7 @@ class GlobalAttention(nn.Module):
         if context_lengths is not None:
             mask = sequence_mask(context_lengths)
             mask = mask.unsqueeze(1)  # Make it broadcastable.
-            align.data.masked_fill_(1 - mask, -float('inf'))
+            align.data.masked_fill_(~mask, -float('inf'))
 
         # Softmax to normalize attention weights
         align_vectors = self.sm(align.view(batch*targetL, sourceL))

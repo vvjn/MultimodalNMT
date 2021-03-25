@@ -1,7 +1,7 @@
-tables
-torchvision
-pretrainedmodels
-six
-tqdm
-torchtext>=0.2.1
-future
+torch<=1.7.1
+torchvision<=0.8.2
+torchaudio<=0.7.2
+torchtext<=0.8.1
+pretrainedmodels==0.7.4
+requests==2.25.1
+tables==3.6.1

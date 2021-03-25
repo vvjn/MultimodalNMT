@@ -53,11 +53,15 @@ if opt.rnn_type == "SRU" and not opt.gpuid:
 if torch.cuda.is_available() and not opt.gpuid:
     print("WARNING: You have a CUDA device, should run with -gpuid 0")
 
+device = torch.device("cpu")
+    
 if opt.gpuid:
-    cuda.set_device(opt.gpuid[0])
+    device = torch.device("cuda:{}".format(opt.gpuid[0]))
+    cuda.set_device(device)
     if opt.seed > 0:
         torch.cuda.manual_seed(opt.seed)
-
+print("Using device: {}".format(device))
+        
 if len(opt.gpuid) > 1:
     sys.stderr.write("Sorry, multigpu isn't supported yet, coming soon!\n")
     sys.exit(1)
@@ -188,7 +192,8 @@ def make_dataset_iter(datasets, fields, opt, is_train=True):
         def batch_size_fn(new, count, sofar):
             return sofar + max(len(new.tgt), len(new.src)) + 1
 
-    device = opt.gpuid[0] if opt.gpuid else -1
+    # device = opt.gpuid[0] if opt.gpuid else -1
+    device = torch.device("cuda:{}".format(opt.gpuid[0])) if opt.gpuid else torch.device("cpu")
 
     return DatasetLazyIter(datasets, fields, batch_size, batch_size_fn,
                            device, is_train)

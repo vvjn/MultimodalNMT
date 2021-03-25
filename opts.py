@@ -426,8 +426,10 @@ def translate_opts(parser):
     group = parser.add_argument_group('Efficiency')
     group.add_argument('-batch_size', type=int, default=30,
                        help='Batch size')
-    group.add_argument('-gpu', type=int, default=-1,
-                       help="Device to run on")
+    group.add_argument('-gpuid', default=[], nargs='+', type=int,
+                       help="Use CUDA on the listed devices.")
+    #group.add_argument('-gpu', type=int, default=-0,
+    #                   help="Device to run on")
 
     # Options most relevant to speech.
     group = parser.add_argument_group('Speech')
